@@ -15,17 +15,69 @@
         //  Although it will work fine with this tutorial, it's almost certainly not the most current version.
         //  Be sure to replace it with an updated version before you start experimenting with adding your own code.
 
-        var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create });
+        var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
         function preload () {
-            game.load.image('logo', '/img/phaser.png');
+		game.load.image('sky', '/img/sky.png');
+		game.load.image('ground', '/img/platform.png');
+		game.load.image('star', '/img/star.png');
+		game.load.spritesheet('dude', '/img/dude.png', 32, 48);
         }
 
         function create () {
-            var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
-            logo.anchor.setTo(0.5, 0.5);
-        }
+		game.physics.startSystem(Phaser.Physics.ARCADE);
+		game.add.sprite(0, 0, 'sky');
+		
+		// grupos de plataformas
+		platforms = game.add.group();
+		platforms.enableBody = true;
 
+		// piso
+		var ground = platforms.create(0, game.world.height - 64, 'ground');
+		ground.scale.setTo(2, 2);
+		ground.body.immovable = true;
+
+		// plataforma 1
+		var ledge = platforms.create(400, 400, 'ground');
+		ledge.body.immovable = true;
+		
+		// paltaforma 2
+		ledge = platforms.create(-150, 250, 'ground');
+		ledge.body.immovable = true;
+
+		// personaje
+		player = game.add.sprite(32, game.world.height - 150, 'dude');
+		game.physics.arcade.enable(player);
+		player.body.bounce.y = 0.2;
+		player.body.gravity.y = 300;
+		player.body.collideWorldBounds = true;
+		player.animations.add ('letf', [0, 1, 2, 3], 10, true);
+		player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+		// controles
+		cursors = game.input.keyboard.createCursorKeys();
+        }
+	
+	function update() {
+		var hitPlatform = game.physics.arcade.collide(player, platforms);
+
+		player.body.velocity.x = 0;
+
+		if (cursors.left.isDown) {
+			player.body.velocity.x = -150;
+			player.animations.play('left');
+		} else if (cursors.right.isDown) {
+			player.body.velocity.x = 150;
+			player.animations.play('right');
+		} else {
+			player.animations.stop();
+			player.frame = 4;
+		}
+
+		if (cursors.up.isDown && player.body.touching.down && hitPlatform) {
+			player.body.velocity.y = -350;
+		}
+	}
     };
 
     </script>
