@@ -8,8 +8,8 @@ Este es un pequeño experimento que estoy realizando para ver si puedo enseñar 
 
 Para probarlo simplemente ejecuta:
 
-    `$ cd gametryout`
-    `$ npm i`
-    `npm start`
+    $ cd gametryout
+    $ npm i
+    npm start
 
 Y luego abre tú navegador en la dirección http://localhost:3000
